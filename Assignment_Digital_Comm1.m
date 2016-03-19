@@ -30,7 +30,7 @@ plot(t,Quantized_Signal,'b');
 hold off ;
 
 figure ;
-digital_signal= uencode( Quantized_Signal , m );
+digital_signal= uencode( Quantized_Signal ,m);
 xlabel('Ts');
 ylabel('digital levels');
 plot(t,digital_signal,'.');
@@ -49,74 +49,100 @@ MSE = sum(mean_square)/length(mean_square)
 %--------------------------------Your Code-----------------------
 
 % -----------------------------reconstruction from oversampling
-oversampling = figure  ;
-t=0:0.001:1; % time signal
-y=2*cos(2*pi*5*t);
-[B,A] = butter(3,1000/100000,'low'); % butter fly filter
-zero_added_signal=zeros(1,length(y)*10);
-for i=1:length(y)
-zero_added_signal(i*10)=y(i);
-end
-zero_added_signal(1:9)=[];
-% Adding zeros enhances the signal display and don't change the
-%spectrum,it changes sampling freq. only
-t=linspace(0,1,length(zero_added_signal));
-filtered_signal = filter(B,A,zero_added_signal);
-plot(t,filtered_signal,'r');
+% oversampling = figure  ;
+% t=0:0.001:1; % time signal
+% y=2*cos(2*pi*5*t);
+% [B,A] = butter(3,1000/100000,'low'); % butter fly filter
+% zero_added_signal=zeros(1,length(y)*10);
+% for i=1:length(y)
+% zero_added_signal(i*10)=y(i);
+% end
+% zero_added_signal(1:9)=[];
+% % Adding zeros enhances the signal display and don't change the
+% %spectrum,it changes sampling freq. only
+% t=linspace(0,1,length(zero_added_signal));
+% filtered_signal = filter(B,A,zero_added_signal);
+% plot(t,filtered_signal,'r');
+% xlabel('time');
+% ylabel('oversampled signals');
+% 
+% 
+% %-----------------------% construction from minimum sampling--------
+% figure;
+% % minimum sampling is nyquios frequency = fs = 2*fmax = 10 
+% t=0:0.1:1;    % replace ?? with the suitable number
+% y=2*cos(2*pi*5*t);
+% % fs = 10 nyquios = 2*fmax = 2*5 ;
+% [B,A] = butter(10,0.1,'low');
+% zero_added_signal=zeros(1,length(y)*10);
+% for i=1:length(y)
+% zero_added_signal(i*10)=y(i);
+% end
+% zero_added_signal(1:9)=[];
+% t=linspace(0,1,length(zero_added_signal));
+% filtered_signal = filter(B,A,zero_added_signal);
+% plot(t,filtered_signal,'r')
+% XLABEL('time')
+% YLABEL('minimum sampled signals')
+% s=fft(filtered_signal);
+% s=fftshift(s);
+% fs=100; % why 100?? Write your comments in the m file
+% % because i added the zeros to the signal as it made 100 sample in the
+% % second instead of the past fs as 10 
+% %(Ts now is 1/100 for the main samples to have 1/10 distance
+% %as this distance must be constant)
+% freq=linspace(-fs/2,fs/2,length(s));
+% figure;
+% plot(freq,abs(s))
+% xlabel('freq')
+% ylabel('magnitude of minimum sampled signals')
+% 
+% %----------------------under sampling-------------------------------%
+% 
+% 
+% figure;
+% t=0:0.2:1;
+% y=2*cos(2*pi*5*t);
+% % the 2nd argument is the cuttoff frequency of the butterfly filter
+% [B,A] = butter(10,0.2,'low');   
+% t=linspace(0,1,length(y));
+% filtered_signal = filter(B,A,y);
+% plot(t,filtered_signal,'r');
+% xlabel('time')
+% ylabel('under sampled signals')
+% s=fft(filtered_signal);
+% s=fftshift(s);
+% fs = 10 ;
+% freq=linspace(-fs/2,fs/2,length(s));
+% figure;
+% plot(freq,abs(s))
+% xlabel('freq axis')
+% ylabel('magnitude of under sampled signals')
+% 
+% %----------------------------Quantize------------------------------%
+% t = 0:1/4000:1 ;
+% y = cos(2*pi*2*t);
+% q = quantizer([m n],'wrap');
+% y = quantize(q , y);
+% figure ;
+% plot(t,y,'.');
+% xlabel('time');
+% ylabel('quantized signal');
+% title('quantize function');
+% 
+
+%-----------------------Compand-------------------------------------%
+
+t = 0:1/20:1 ;
+y = cos(2*pi*2*t);
+out = compand(y,255,max(y),'mu/compressor');
+figure ;
+plot(t,y,'.');
 xlabel('time');
-ylabel('oversampled signals');
-
-
-%-----------------------% construction from minimum sampling--------
-figure;
-% minimum sampling is nyquios frequency = fs = 2*fmax = 10 
-t=0:0.1:1;    % replace ?? with the suitable number
-y=2*cos(2*pi*5*t);
-% fs = 10 nyquios = 2*fmax = 2*5 ;
-[B,A] = butter(10,0.1,'low');
-zero_added_signal=zeros(1,length(y)*10);
-for i=1:length(y)
-zero_added_signal(i*10)=y(i);
-end
-zero_added_signal(1:9)=[];
-t=linspace(0,1,length(zero_added_signal));
-filtered_signal = filter(B,A,zero_added_signal);
-plot(t,filtered_signal,'r')
-XLABEL('time')
-YLABEL('minimum sampled signals')
-s=fft(filtered_signal);
-s=fftshift(s);
-fs=100; % why 100?? Write your comments in the m file
-% because i added the zeros to the signal as it made 100 sample in the
-% second instead of the past fs as 10 
-%(Ts now is 1/100 for the main samples to have 1/10 distance
-%as this distance must be constant)
-freq=linspace(-fs/2,fs/2,length(s));
-figure;
-plot(freq,abs(s))
-xlabel('freq')
-ylabel('magnitude of minimum sampled signals')
-
-%----------------------under sampling-------------------------------%
-
-
-figure;
-t=0:0.2:1;
-y=2*cos(2*pi*5*t);
-% the 2nd argument is the cuttoff frequency of the butterfly filter
-[B,A] = butter(10,0.2,'low');   
-t=linspace(0,1,length(y));
-filtered_signal = filter(B,A,y);
-plot(t,filtered_signal,'r');
-xlabel('time')
-ylabel('under sampled signals')
-s=fft(filtered_signal);
-s=fftshift(s);
-fs = 10 ;
-freq=linspace(-fs/2,fs/2,length(s));
-figure;
-plot(freq,abs(s))
-xlabel('freq axis')
-ylabel('magnitude of under sampled signals')
-
-%----------------------------------------------------------------%
+ylabel('compand compressor with M = 255');
+out = compand(y,10,max(y),'mu/expander');
+figure ;
+plot(t,y,'.');
+xlabel('time');
+ylabel('compand compressor with M = 10');
+%-----------------------------------------------------------------%
