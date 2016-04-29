@@ -1,4 +1,4 @@
-function [time,basis_total] = BasisGenerator(t, y_total)
+function [time,basis_total,basisNumber] = BasisGenerator(t, y_total)
     dim = size(y_total);
     % number of signals n ;
     time = t ;
@@ -28,6 +28,7 @@ function [time,basis_total] = BasisGenerator(t, y_total)
             end
         end
         if(bool == true)
+            norm(iterbasis)
             % normalise it
             iterbasis = iterbasis./norm(iterbasis);
             % concat it to basis we have
